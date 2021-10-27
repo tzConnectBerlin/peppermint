@@ -1,5 +1,4 @@
 import { createRequire } from 'module'
-
 const require = createRequire(import.meta.url);
 
 const { Pool } = require('pg');
@@ -9,43 +8,39 @@ const CHECKOUT_SQL = "WITH cte AS (SELECT id FROM operations WHERE state='pendin
 const SENT_SQL = "UPDATE operations SET state = 'waiting', included_in = $1 WHERE id = ANY($2)"
 const SET_STATE_SQL = "UPDATE operations SET state = $1 WHERE id = ANY($2)"
 
-const pool = new Pool({
-        user: 'dani',
-        password: 'foobar',
-        host: 'localhost',
-        port: 5432,
-        database: 'chainop_queue'
-});
+export default function(db_connection) {
+	let pool = new Pool(db_connection);
 
-const set_state = async function(ids, state) {
-        return pool.query(SET_STATE_SQL, [ state, ids ]);
-};
+	const set_state = async function(ids, state) {
+			return pool.query(SET_STATE_SQL, [ state, ids ]);
+	};
 
-const checkout = async function(originator, limit) {
-        let result = await pool.query(CHECKOUT_SQL, [originator, limit]);
-        return result.rows;
-};
+	const checkout = async function(originator, limit) {
+			let result = await pool.query(CHECKOUT_SQL, [originator, limit]);
+			return result.rows;
+	};
 
-const save_sent = function(ids, op_hash) {
-        return pool.query(SENT_SQL, [op_hash, ids]);
-};
+	const save_sent = function(ids, op_hash) {
+			return pool.query(SENT_SQL, [op_hash, ids]);
+	};
 
-const save_confirmed = function(ids) {
-        return set_state(ids, 'confirmed');
-}
+	const save_confirmed = function(ids) {
+			return set_state(ids, 'confirmed');
+	};
 
-const save_rejected = function(ids) {
-        return set_state(ids, 'rejected');
-}
+	const save_rejected = function(ids) {
+			return set_state(ids, 'rejected');
+	};
 
-const save_failed = function(ids) {
-        return set_state(ids, 'failed');
-}
+	const save_failed = function(ids) {
+			return set_state(ids, 'failed');
+	};
 
-export default {
-        checkout,
-        save_rejected,
-        save_sent,
-        save_confirmed,
-        save_failed
+	return {
+			checkout,
+			save_rejected,
+			save_sent,
+			save_confirmed,
+			save_failed
+	};
 }

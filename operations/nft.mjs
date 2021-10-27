@@ -17,6 +17,7 @@ export default async function(tezos, nft_address) {
 
 			};
 			batch.withContractCall(nft_contract.methods.mint(token_def, metadata, [from_address]));
+			return true;
 		},
 		transfer: async function({ token_id, from_address, to_address }, batch) {
 			let transfer_arg = [
@@ -32,6 +33,7 @@ export default async function(tezos, nft_address) {
                 }
             ];
 			batch.withContractCall(nft_contract.methods.transfer(transfer_arg));
+			return true;
 		}
 	};
 }

@@ -1,7 +1,15 @@
 {
 	"batchSize": 50,
-	"nftContract": "",
-	"privateKey": "edsk4LzAuuQF1FkFHV5qXmpL8a5YNtJh1pTtkAYjAVBKCSAbp6LCCD",
+	"confirmations": 1,
+	"nftContract": "KT1G57pLnaHzfFA8jZm9ZHfsqtHTk1KeL5fY",
+	"privateKey": "edsk3QxdLdrDSnzh6sBwN96fZw15mDQRfpWWnaE2KUWfVDTmmZLXRe",
 	"rpcUrl": "http://granada.newby.org:8732/",
-	"pollDelay": 10000
+	"pollingDelay": 10000,
+	"dbConnection": {
+		"user": "dani",
+        "password": "foobar",
+        "host": "localhost",
+        "port": 5432,
+        "database": "chainop_queue"
+	}
 }

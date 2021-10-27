@@ -9,6 +9,7 @@ export default async function() {
 				amount: amount
 			}
 			batch.withTransfer(transfer_arg)
+			return true;
 		}
 	};
 }
