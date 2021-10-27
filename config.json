@@ -1,0 +1,7 @@
+{
+	"batchSize": 50,
+	"nftContract": "",
+	"privateKey": "edsk4LzAuuQF1FkFHV5qXmpL8a5YNtJh1pTtkAYjAVBKCSAbp6LCCD",
+	"rpcUrl": "http://granada.newby.org:8732/",
+	"pollDelay": 10000
+}
