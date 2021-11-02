@@ -21,18 +21,21 @@ In the current state of the codebase, failed operations won't be retried.
 
 ### Command JSON for minting NFTs
 
+```
 {
 	"handler": "nft",
 	"name": "mint",
 	"command": {
-	"token_id": 1, // integer token id
+	"token_id": 1, // integer token idgit pu
 	"to_address" : "tz1xxx", // Tezos address to which the NFT will be assigned
 	"metadata_ipfs": "ipfs://xxx" // ipfs URI pointing to TZIP-16 metadata
 	}
 }
+```
 
 ### Command JSON for transferring NFTs
 
+```
 {
 	"handler": "nft",
 	"name": "transfer",
@@ -42,9 +45,11 @@ In the current state of the codebase, failed operations won't be retried.
 	"to_address" : "tz1xxx", // Tezos address to which the NFT will be transferred
 	}
 }
+```
 
 ### Command JSON for transferring tez
 
+```
 {
 	"handler": "tez",
 	"name": "transfer",
@@ -53,3 +58,4 @@ In the current state of the codebase, failed operations won't be retried.
 		"to_address": "tz1xxx" // Address where the tez will be transferred
 	}
 }
+```
