@@ -1,4 +1,4 @@
-# TokenManager batch engine
+# Peppermint batch engine
 
 We made this thing for the purpose of minting and transferring NFTs, transferring tez, and potentially other purposes (such as transferring fungible tokens, etc.)
 
