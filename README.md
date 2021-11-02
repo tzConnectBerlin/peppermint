@@ -15,6 +15,10 @@ In this directory
 
 `npm install`
 
+create your database schema:
+
+`psql $DATABASE_NAME` < database/schema.sql`
+
 ## Configuration
 
 config.json has all user-configurable parts
