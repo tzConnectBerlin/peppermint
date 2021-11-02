@@ -4,6 +4,11 @@ We made this thing for the purpose of minting and transferring NFTs, transferrin
 
 It polls a database for work to do at a configured minimum interval (but will always wait for a batch to be confirmed before pulling another one). Currently it runs with an unencrypted private key in an in-memory signer, it's not nice but it's fast, and the signer is relatively simple to replace if needed (but it has to be able to sign without user input - so hardware wallets won't work, sorry).
 
+## Prerequisites
+node.js version 16+
+npm 7+
+postgresql (tested with version 12)
+
 ## Work queue
 
 The database table used for queuing work is defined as a Postgres schema in `database/schema.sql`.
