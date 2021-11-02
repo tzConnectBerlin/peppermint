@@ -3,7 +3,7 @@
 	"confirmations": 1,
 	"nftContract": "KT1PptVxoGBiLbtJr2kzXeUsBc2qRAsM7HKS",
 	"privateKey": "edsk4LzAuuQF1FkFHV5qXmpL8a5YNtJh1pTtkAYjAVBKCSAbp6LCCD",
-	"rpcUrl": "http://granada.newby.org:8732/",
+	"rpcUrl": "http://immensely.newby.org:8734/",
 	"pollingDelay": 10000,
 	"dbConnection": {
 		"user": "dani",
