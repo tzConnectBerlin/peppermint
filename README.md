@@ -9,6 +9,20 @@ It polls a database for work to do at a configured minimum interval (but will al
 - npm 7+
 - postgresql (tested with version 12)
 
+## Installation
+
+In this directory 
+
+`npm install`
+
+## Configuration
+
+config.json has all user-configurable parts
+
+## How to run
+
+`node app.mjs`
+
 ## Work queue
 
 The database table used for queuing work is defined as a Postgres schema in `database/schema.sql`.
