@@ -15,7 +15,7 @@ To add a new work item, fill in the follwing fields:
   - `name`: The name of the function on the handler that can generate the operation (eg. `transfer`, `mint`)
   - `args`: The arguments expected by the handler function (eg. from, to, metadata, etc.)
 
-(eg, in pg.js, the parametric statement would look like `INSERT INTO operations (originator, command) VALUES ($1, $2)`)
+(eg, in pg.js, the parametric statement would look like `INSERT INTO peppermint.operations (originator, command) VALUES ($1, $2)`)
 
 In the current state of the codebase, failed operations won't be retried.
 
