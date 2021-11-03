@@ -73,7 +73,7 @@ const main = async function() {
 			if (result.completed) {
 				console.log("Operation group with hash", op_hash, "has been successfully confirmed.");
 				queue.save_confirmed(batched_ids).catch((err) => { console.error("Database error when saving confirmed status to operations with ids:", JSON.stringify(batched_ids)); });
-				return true;
+//				return true;
 			} else {
 				// FIXME: Taquito .confirmation() gives us some interesting and underdocumented results
 				// it should be possible to prepare for chain reorgs based on it
@@ -81,10 +81,11 @@ const main = async function() {
 				queue.save_failed(batched_ids).catch((err) => { console.error("Database error when saving failed status to operations with ids:", JSON.stringify(batched_ids)); });
 			}
 		} catch (err) {
-			console.error("An error has occurred when processing operations with ids:", JSON.stringify(batched_ids), "\n", err);
-			queue.save_rejected(batched_ids).catch((err) => { console.error("Database error when updating rejected operation with ids:", JSON.stringify(batched_ids)); });;
+			console.error("An error has occurred when processing operations with ids:", JSON.stringify(batched_ids), "\n", err, "\nOperation group state unknown.");
+			//queue.save_rejected(batched_ids).catch((err) => { console.error("Database error when updating rejected operation with ids:", JSON.stringify(batched_ids)); });;
+			// FIXME: add 'unknown' status
 		}
-		return false;
+		return true;
 	};
 
 	let signal = true;
