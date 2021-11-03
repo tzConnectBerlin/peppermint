@@ -4,6 +4,29 @@ We made this thing for the purpose of minting and transferring NFTs, transferrin
 
 It polls a database for work to do at a configured minimum interval (but will always wait for a batch to be confirmed before pulling another one). Currently it runs with an unencrypted private key in an in-memory signer, it's not nice but it's fast, and the signer is relatively simple to replace if needed (but it has to be able to sign without user input - so hardware wallets won't work, sorry).
 
+## Prerequisites
+- node.js version 16+
+- npm 7+
+- postgresql (tested with version 12)
+
+## Installation
+
+In this directory 
+
+`npm install`
+
+create your database schema:
+
+`psql $DATABASE_NAME` < database/schema.sql`
+
+## Configuration
+
+config.json has all user-configurable parts
+
+## How to run
+
+`node app.mjs`
+
 ## Work queue
 
 The database table used for queuing work is defined as a Postgres schema in `database/schema.sql`.
@@ -25,7 +48,7 @@ In the current state of the codebase, failed operations won't be retried.
 {
 	"handler": "nft",
 	"name": "mint",
-	"command": {
+	"args": {
 	"token_id": 1, // integer token idgit pu
 	"to_address" : "tz1xxx", // Tezos address to which the NFT will be assigned
 	"metadata_ipfs": "ipfs://xxx" // ipfs URI pointing to TZIP-16 metadata
@@ -39,7 +62,7 @@ In the current state of the codebase, failed operations won't be retried.
 {
 	"handler": "nft",
 	"name": "transfer",
-	"command": {
+	"args": {
 	"token_id": 1, // integer token id
 	"from_address" : "tz2xxx", // Tezos address from which the NFT will be transferred
 	"to_address" : "tz1xxx", // Tezos address to which the NFT will be transferred
@@ -53,7 +76,7 @@ In the current state of the codebase, failed operations won't be retried.
 {
 	"handler": "tez",
 	"name": "transfer",
-	"command": {
+	"args": {
 		"amount": 100.0 // Js number tez amount
 		"to_address": "tz1xxx" // Address where the tez will be transferred
 	}
