@@ -36,11 +36,17 @@ export default function(db_connection) {
 			return set_state(ids, 'failed');
 	};
 
+	const save_unknown = function(ids) {
+		return set_state(ids, 'unknown');
+	};
+
+
 	return {
 			checkout,
 			save_rejected,
 			save_sent,
 			save_confirmed,
-			save_failed
+			save_failed,
+			save_unknown
 	};
 }

@@ -82,7 +82,7 @@ const main = async function() {
 			}
 		} catch (err) {
 			console.error("An error has occurred when processing operations with ids:", JSON.stringify(batched_ids), "\n", err, "\nOperation group state unknown.");
-			//queue.save_rejected(batched_ids).catch((err) => { console.error("Database error when updating rejected operation with ids:", JSON.stringify(batched_ids)); });;
+			queue.save_unknown(batched_ids).catch((err) => { console.error("Database error when updating rejected operation with ids:", JSON.stringify(batched_ids)); });;
 			// FIXME: add 'unknown' status
 		}
 		return true;
