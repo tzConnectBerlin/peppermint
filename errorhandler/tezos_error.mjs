@@ -18,7 +18,7 @@ const parse_error_object = function(err) {
 	} catch {
 		return null;
 	}
-	return Object.assign(json_part, err);
+	return Object.assign({ msg_json: json_part }, err);
 }
 
 console.log(parse_error_object(parsed[0]));
