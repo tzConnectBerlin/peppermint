@@ -49,9 +49,10 @@ In the current state of the codebase, failed operations won't be retried.
 	"handler": "nft",
 	"name": "mint",
 	"args": {
-	"token_id": 1, // integer token idgit pu
+	"token_id": 1, // integer token id
 	"to_address" : "tz1xxx", // Tezos address to which the NFT will be assigned
 	"metadata_ipfs": "ipfs://xxx" // ipfs URI pointing to TZIP-16 metadata
+	"amount" : 1 // (optional) integer amount of edition size to be minted
 	}
 }
 ```
@@ -66,6 +67,7 @@ In the current state of the codebase, failed operations won't be retried.
 	"token_id": 1, // integer token id
 	"from_address" : "tz2xxx", // Tezos address from which the NFT will be transferred
 	"to_address" : "tz1xxx", // Tezos address to which the NFT will be transferred
+	"amount" : 1 // (optional) integer amount of tokens to transfer
 	}
 }
 ```
