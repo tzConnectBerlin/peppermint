@@ -27,23 +27,29 @@ export default async function(tezos, nft_address) {
 	}
 
 	return {
-		mint: function({ token_id, to_address, metadata_ipfs }, batch) {
+		mint: function({ token_id, to_address, metadata_ipfs, amount }, batch) {
+			if (!amount) {
+				amount = 1;
+			}
 			let token_info = MichelsonMap.fromLiteral({"": char2Bytes(metadata_ipfs)});
 			let create_op = create_token(token_id, token_info);
-			let mint_op = mint_tokens([{ owner: to_address, token_id, amount: 1 }]);
+			let mint_op = mint_tokens([{ owner: to_address, token_id, amount }]);
 			batch.withContractCall(create_op);
 			batch.withContractCall(mint_op);
 			return true;
 		},
-		transfer: function({ token_id, from_address, to_address }, batch) {
+		transfer: function({ token_id, from_address, to_address, amount }, batch) {
+			if (!amount) {
+				amount = 1;
+			}
 			let transfer_arg = [
                 {
                     from_: from_address,
                     txs: [
                         {
                             to_: to_address,
-                            token_id: token_id,
-                            amount: 1
+                            token_id,
+                            amount
                         }
                     ]
                 }
