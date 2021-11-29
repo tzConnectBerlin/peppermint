@@ -75,7 +75,7 @@ const main = async function() {
 				if (result.completed) {
 					console.log("Operation group with hash", op_hash, "has been successfully confirmed.");
 					queue.save_confirmed(batched_ids).catch((err) => { console.error("Database error when saving confirmed status to operations with ids:", JSON.stringify(batched_ids)); });
-	//				return true;
+					return true;
 				} else {
 					// FIXME: Taquito .confirmation() gives us some interesting and underdocumented results
 					// it should be possible to prepare for chain reorgs based on it
