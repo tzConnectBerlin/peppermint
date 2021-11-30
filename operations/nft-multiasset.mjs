@@ -17,11 +17,11 @@ export default async function(tezos, nft_address) {
 		transfer_tokens: nft_contract.methods.transfer
 	}
 
-	for (let [key, value] in Object.entries(contract_ops)) {
+	Object.entries(contract_ops).forEach(([key, value]) => {
 		if (typeof value != 'function') {
 			throw new Error("Invalid token contract signature");
 		}
-	}
+	});
 
 	let create_token = function(token_id, metadata_ipfs) {
 		let token_info = MichelsonMap.fromLiteral({"": char2Bytes(metadata_ipfs)});
