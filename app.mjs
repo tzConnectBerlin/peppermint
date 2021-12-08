@@ -96,7 +96,11 @@ const main = async function() {
 						// case "gas_limit_too_high":
 						// 	// Do something smart later
 						case "gas_exhausted.block":
-							console.log("Block gas limit error - most likely due to know Octez bug. Retrying...")
+							console.log("Block gas limit error - most likely due to know Octez bug. Retrying...");
+							continue;
+						case "contract.balance_too_low":
+						case "contract.cannot_pay_storage_fee":
+							console.log("Balance too low, please fund the account. Retrying...");
 							continue;
 						case "michelson_v1.script_rejected":
 							console.log("A Michelson script error has occurred when processing operations with ids:", JSON.stringify(batched_ids), "\n", err);
