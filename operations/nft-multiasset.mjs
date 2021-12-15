@@ -40,6 +40,11 @@ export default async function(tezos, nft_address) {
 			batch.withContractCall(create_op);
 			return true;
 		},
+		mint: function({ token_id, to_address, amount }, batch) {
+			let mint_op = mint_token(token_id, to_address, amount);
+			batch.withContractCall(mint_op);
+			return true;
+		},
 		create_and_mint: function({ token_id, to_address, metadata_ipfs, amount }, batch) {
 			let create_op = create_token(token_id, metadata_ipfs);
 			let mint_op = mint_token(token_id, to_address, amount);
@@ -49,14 +54,9 @@ export default async function(tezos, nft_address) {
 		},
 		create_and_mint_multiple: function({ token_id, metadata_ipfs, destinations }, batch) {
 			let create_op = create_token(token_id, metadata_ipfs);
-			batch.withContractCall(create_op);
 			let mint_args = destinations.map(e => ({ token_id, owner: e.to_address, amount: e.amount }));
 			let mint_op = contract_ops.mint_tokens(mint_args);
-			batch.withContractCall(mint_op);
-			return true;
-		},
-		mint: function({ token_id, to_address, amount }, batch) {
-			let mint_op = mint_token(token_id, to_address, amount);
+			batch.withContractCall(create_op);
 			batch.withContractCall(mint_op);
 			return true;
 		},

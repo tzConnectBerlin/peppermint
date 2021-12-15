@@ -40,19 +40,25 @@ To add a new work item, fill in the follwing fields:
 
 (eg, in pg.js, the parametric statement would look like `INSERT INTO peppermint.operations (originator, command) VALUES ($1, $2)`)
 
-In the current state of the codebase, failed operations won't be retried.
+In the current state of the codebase, failed operations won't be retried except for a few known retriable fail states (known Octez glitches, no tez in minter account).
+
+Modules for handling contract types can be added under `operations`. The handler modules included in this version are:
+- FA2 multi-asset (as 'nft' - we know it's a misnomer, but it's what it is for now)
+- tez (for plain tez transfers)
+
+For now, the code is the documentation. We're truly sorry. More documentation will come in due time. In the meantime, here are some example operations you can do:
 
 ### Command JSON for minting NFTs
 
 ```
 {
 	"handler": "nft",
-	"name": "mint",
+	"name": "create_and_mint",
 	"args": {
-	"token_id": 1, // integer token id
-	"to_address" : "tz1xxx", // Tezos address to which the NFT will be assigned
-	"metadata_ipfs": "ipfs://xxx" // ipfs URI pointing to TZIP-16 metadata
-	"amount" : 1 // (optional) integer amount of edition size to be minted
+		"token_id": 1, // integer token id
+		"to_address" : "tz1xxx", // Tezos address to which the NFT will be assigned
+		"metadata_ipfs": "ipfs://xxx" // ipfs URI pointing to TZIP-16 metadata
+		"amount" : 1 // (optional) integer amount of edition size to be minted
 	}
 }
 ```
@@ -64,10 +70,10 @@ In the current state of the codebase, failed operations won't be retried.
 	"handler": "nft",
 	"name": "transfer",
 	"args": {
-	"token_id": 1, // integer token id
-	"from_address" : "tz2xxx", // Tezos address from which the NFT will be transferred
-	"to_address" : "tz1xxx", // Tezos address to which the NFT will be transferred
-	"amount" : 1 // (optional) integer amount of tokens to transfer
+		"token_id": 1, // integer token id
+		"from_address" : "tz2xxx", // Tezos address from which the NFT will be transferred
+		"to_address" : "tz1xxx", // Tezos address to which the NFT will be transferred
+		"amount" : 1 // (optional) integer amount of tokens to transfer
 	}
 }
 ```
