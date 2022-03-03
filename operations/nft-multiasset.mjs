@@ -7,8 +7,8 @@ import { char2Bytes } from '@taquito/utils'
 // const hex = require('string-hex');
 // const utf8 = require('utf8')
 
-export default async function(tezos, nft_address) {
-	let nft_contract = await tezos.contract.at(nft_address);
+export default async function(tezos, { contract_address }) {
+	let nft_contract = await tezos.contract.at(contract_address);
 	console.log("token contract loaded", nft_contract.parameterSchema.ExtractSignatures());
 
 	let contract_ops = {

@@ -3,10 +3,14 @@ import { TezosToolkit, TezosOperationError } from '@taquito/taquito'
 import { InMemorySigner } from '@taquito/signer'
 
 import Queue from './queue.mjs'
-import NftHandler from './operations/nft-multiasset.mjs'
-import TezHandler from './operations/tez.mjs'
 import { parse_rpc_error, postprocess_error_object } from './errorhandler/tezos_error.mjs'
-import tez from './operations/tez.mjs'
+
+import MultiassetHandler from './operations/nft-multiasset.mjs'
+import TezHandler from './operations/tez.mjs'
+const Handlers = {
+	MultiassetHandler,
+	TezHandler
+}
 
 const require = createRequire(import.meta.url);
 require('console-stamp')(console);
@@ -22,9 +26,10 @@ const main = async function() {
 	console.log("Signer initialized for originating address ", address);
 	tezos.setSignerProvider(signer);
 
-	const handlers = {
-		'nft': await NftHandler(tezos, config.nftContract),
-		'tez': await TezHandler(tezos)
+	let handlers = {};
+	for (let key in config.handlers) {
+		let val = config.handlers[key];
+		handlers[key] = await (Handlers[val.handler](tezos, val.args));
 	}
 
 	const dispatch_command = function(command, batch) {
