@@ -21,7 +21,11 @@ create your database schema:
 
 ## Configuration
 
-config.json has all user-configurable parts
+`config.json` has all user-configurable parts *(selecting config file via command line argument pending implementation)*
+
+This version of Peppermint allows multiple instances of handlers to be configured via `config.json`. In the `handlers` section, one can add multiple instances of the same handler module with different arguments, under different names. The names specified here will be used as the handler names in the SQL commands.
+
+At this moment, to reduce complexity, handler modules are *not* auto-populated from the `operations` folder, but imported manually in `app.mjs` - so when adding new, custom handler modules, these need to be specifically imported and added to the `Handlers` object in that file.
 
 ## How to run
 
@@ -34,7 +38,7 @@ The database table used for queuing work is defined as a Postgres schema in `dat
 To add a new work item, fill in the follwing fields:
 - `originator`: The address the operation should be originated from. A process will only pull work with an `originator` value that matches the address of its signer
 - `command`: A json structure, with the following fields:
-  - `handler`: The name of the module that implements this type of operation (rn we have `nft` and `tez`)
+  - `handler`: The name of the handler instance to invoke (configured via the `handlers` section in `config.json`)
   - `name`: The name of the function on the handler that can generate the operation (eg. `transfer`, `mint`)
   - `args`: The arguments expected by the handler function (eg. from, to, metadata, etc.)
 
