@@ -17,19 +17,25 @@ export default async function(tezos, { contract_address }) {
 		transfer_tokens: nft_contract.methods.transfer
 	}
 
-	Object.entries(contract_ops).forEach(([key, value]) => {
-		if (typeof value != 'function') {
-			throw new Error("Invalid token contract signature");
-		}
-	});
+	// Object.entries(contract_ops).forEach(([key, value]) => {
+	// 	if (typeof value != 'function') {
+	// 		throw new Error("Invalid token contract signature");
+	// 	}
+	// });
 
 	let create_token = function(token_id, metadata_ipfs) {
+		if (typeof contract_ops.create_token != 'function') {
+			throw new Error("No create_token entrypoint on contract");
+		}
 		let token_info = MichelsonMap.fromLiteral({"": char2Bytes(metadata_ipfs)});
 		let create_op = contract_ops.create_token(token_id, token_info);
 		return create_op;
 	};
 
 	let mint_token = function(token_id, to_address, amount = 1) {
+		if (typeof contract_ops.mint_tokens != 'function') {
+			throw new Error("No mint_tokens entrypoint on contract");
+		}
 		let mint_op = contract_ops.mint_tokens([{ owner: to_address, token_id, amount }]);
 		return mint_op;
 	};
@@ -61,6 +67,9 @@ export default async function(tezos, { contract_address }) {
 			return true;
 		},
 		transfer: function({ token_id, from_address, to_address, amount }, batch) {
+			if (typeof contract_ops.transfer_tokens != 'function') {
+				throw new Error("No transfer_tokens entrypoint on contract");
+			}
 			if (!amount) {
 				amount = 1;
 			}
