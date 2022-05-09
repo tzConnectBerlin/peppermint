@@ -1,0 +1,9 @@
+{
+	"name": "Example Token",
+	"description": "Example Token description",
+	"symbol": "EXAMPLE",
+	"is_boolean": false,
+	"artifact_filename": "example-1000x1000.png",
+	"display_filename": "example-400x400.png",
+	"thumbnail_filename": "example-328x328.png"
+}

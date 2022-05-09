@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import sys
 import base58
 import json
@@ -8,6 +9,7 @@ import requests
 
 
 config = {}
+working_directory = ""
 
 # async def persist_nfts(nfts):
 #     for nft in nfts:
@@ -51,10 +53,28 @@ def queue_create_op(content_ipfs_hash, token_id, handler, originator):
                 (originator,
                  json.dumps({
                      "handler": handler,
-                     "name": "create_token",
+                     "name": "create",
                      "args": {
                          "token_id": token_id,
                          "metadata_ipfs": f"ipfs://{content_ipfs_hash}",
+                     }
+                 })))
+    conn.commit()
+    conn.close()
+
+
+def queue_mint_op(token_id, destination, handler, originator):
+    conn = connect_db()
+    cur = conn.cursor()
+    cur.execute("INSERT INTO peppermint.operations(originator, command) VALUES (%s, %s);",
+                (originator,
+                 json.dumps({
+                     "handler": handler,
+                     "name": "mint",
+                     "args": {
+                         "token_id": token_id,
+                         "to_address": destination,
+                         "amount": 1
                      }
                  })))
     conn.commit()
@@ -94,9 +114,18 @@ def get_nft_metadata(ipfs_hashes, nft):
     return metadata
 
 
+def get_pinata_headers():
+#    return {"Authorization": f"Bearer {config['PINATA_JWT']}"}
+    return {
+        "pinata_api_key": config['PINATA_API_KEY'],
+        "pinata_secret_api_key": config['PINATA_SECRET_API_KEY']
+    }
+
+
 def upload_file_to_pinata(filename):
-    headers = {"Authorization": f"Bearer {config['PINATA_JWT']}"}
-    with open(filename,'rb') as bin:
+    headers = get_pinata_headers()
+    file_with_path = os.path.join(working_directory, filename)
+    with open(file_with_path,'rb') as bin:
         response = requests.post("https://api.pinata.cloud/pinning/pinFileToIPFS",
                                 headers=headers,
                                 files={'file': bin},
@@ -107,7 +136,7 @@ def upload_file_to_pinata(filename):
 
 
 def upload_json_to_pinata(obj):
-    headers = {"Authorization": f"Bearer {config['PINATA_JWT']}"}
+    headers = get_pinata_headers()
     response = requests.post("https://api.pinata.cloud/pinning/pinJSONToIPFS",
                              headers=headers,
                              json=obj,
@@ -134,13 +163,12 @@ def create_ipfs_metadata(nft):
     nft['metadata_ipfs_hash'] = metadata_ipfs_hash
     return nft
 
-
 #main
 
 if len(sys.argv) < 3:
-    print("Usage: nft.py {command} {filename} [args...]")
-    print("Commands: upload_ipfs, create_token")
-    exit
+    print("Usage: nft.py {command} {nft filename} [args...]")
+    print("Commands: upload_ipfs, create_token, mint_token")
+    sys.exit(1)
 
 with open('config.json') as f:
     config = json.load(f)
@@ -152,22 +180,44 @@ with open(filename) as f:
     nft = json.load(f)
 print(f"processing:\n{json.dumps(nft)}")
 
+working_directory = os.path.dirname(os.path.abspath(filename))
+
 if command == 'upload_ipfs':
-    nft = upload_assets_to_pinata(nft)
+    nft['metadata_ipfs_hash'] = upload_assets_to_pinata(nft)
     with open(filename, 'w') as f:
         f.write(json.dumps(nft))
     print(f"IPFS hash persisted into {filename}")
 elif command == 'create_token':
-    if not nft['metadata_ipfs_hash']:
+    ipfs_hash = nft.get('metadata_ipfs_hash')
+    if not ipfs_hash:
         print("NFT metadata is not in IPFS yet")
-        exit
-    if len(sys.argv) < 4:
-        print("Usage: nft.py create_token {peppermint handler} [token_id]")
-        exit
-    peppermint_handler = sys.argv[3]
+        sys.exit(1)
+    if len(sys.argv) > 3:
+        peppermint_handler = sys.argv[3]
+    else:
+        print("Usage: nft.py create_token {nft filename} {peppermint handler} [token_id]")
+        sys.exit(1)
     if len(sys.argv) > 4:
         token_id = sys.argv[4]
     else:
         token_id = get_token_id(nft['metadata_ipfs_hash'])
-
     queue_create_op(nft['metadata_ipfs_hash'], token_id, peppermint_handler, config['PEPPERMINT_ORIGINATOR'])
+    nft['peppermint_handler'] = peppermint_handler
+    nft['token_id'] = token_id
+    with open(filename, 'w') as f:
+        f.write(json.dumps(nft))
+elif command == 'mint_token':
+    if len(sys.argv) > 3:
+        destinations_filename = sys.argv[3]
+    else:
+        print("Usage: nft.py mint_token {nft filename} {destinations filename}")
+        sys.exit(1)
+    peppermint_handler = nft.get('peppermint_handler')
+    token_id = nft.get('token_id')
+    if (not peppermint_handler) or (not token_id):
+        print("Peppermint handler and token_id not available yet")
+        sys.exit(1)
+    with open(destinations_filename) as f:
+        destinations = json.load(f)
+    for d in destinations:
+        queue_mint_op(token_id, d, peppermint_handler, config['PEPPERMINT_ORIGINATOR'])
