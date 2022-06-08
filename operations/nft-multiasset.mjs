@@ -40,6 +40,14 @@ export default async function(tezos, { contract_address }) {
 		return mint_op;
 	};
 
+	let burn_token = function(token_id, from_address, amount = 1) {
+		if (typeof contract_ops.burn_tokens != 'function') {
+			throw new Error("No mint_tokens entrypoint on contract");
+		}
+		let burn_op = contract_ops.burn_tokens([{ owner: from_address, token_id, amount }]);
+		return burn_op;
+	};
+
 	return {
 		create: function({ token_id, metadata_ipfs }, batch) {
 			let create_op = create_token(token_id, metadata_ipfs);
@@ -87,6 +95,11 @@ export default async function(tezos, { contract_address }) {
             ];
 			batch.withContractCall(contract_ops.transfer_tokens(transfer_arg));
 			return true;
-		}
+		},
+		burn: function({ token_id, from_address, amount }, batch) {
+			let burn_op = burn_token(token_id, from_address, amount);
+			batch.withContractCall(burn_op);
+			return true;
+		},
 	};
 }
