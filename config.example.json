@@ -4,6 +4,7 @@
 	"privateKey": "edsk4LzAuuQF1FkFHV5qXmpL8a5YNtJh1pTtkAYjAVBKCSAbp6LCCD",
 	"rpcUrl": "http://immensely.newby.org:8734/",
 	"pollingDelay": 10000,
+	"timeout": 300,
 	"dbConnection": {
 		"user": "dani",
         "password": "foobar",

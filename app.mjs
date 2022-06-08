@@ -88,7 +88,7 @@ const main = async function() {
 			queue.save_sent(batched_ids, sent_operation.opHash).catch( (err) => { console.error("Database error when writing hash", sent_operation.opHash, "to sent operations with ids:", JSON.stringify(batched_ids)); } );
 
 			// Wait for it to be baked
-			let result = await sent_operation.confirmation(config.confirmations);
+			let result = await sent_operation.confirmation(config.confirmations, config.timeout);
 			if (result.completed) {
 				console.log("Operation group with hash", op_hash, "has been successfully confirmed.");
 				save_state_async(batched_ids, queue.state.CONFIRMED); // save state
