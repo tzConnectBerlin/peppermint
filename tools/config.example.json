@@ -1,0 +1,9 @@
+{
+	"DB_HOST": "localhost",
+	"DB_NAME": "peppermint",
+	"DB_USER": "peppermint",
+	"DB_PASSWORD": "peppermint",
+	"PEPPERMINT_ORIGINATOR": "tz1burnburnburnburnburnburnburjAYjjX",
+	"PINATA_API_KEY": "FIXME",
+	"PINATA_SECRET_API_KEY": "FIXME"
+}

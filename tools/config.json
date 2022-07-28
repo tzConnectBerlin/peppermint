@@ -1,0 +1,8 @@
+{
+	"DB_HOST": "localhost",
+	"DB_NAME": "peppermint",
+	"DB_USER": "peppermint",
+	"DB_PASSWORD": "peppermint",
+	"PEPPERMINT_ORIGINATOR": "nft",
+	"PINATA_JWT": "FIXME"
+}
