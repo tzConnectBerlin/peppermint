@@ -22,13 +22,12 @@ const get_signing_key = async function(config) {
     const signer = new InMemorySigner(config.privateKey);
     return signer;
   } catch (err) {
-    console.log(typeof(err));
-    console.log(err.class);
     if (err.name == 'InvalidPassphraseError') {
       const pass = await promptly.prompt('Passphrase: ', { silent: true });
-      console.log(config.privateKey + ' ' + pass);
       const signer = InMemorySigner.fromSecretKey(config.privateKey, pass);
       return signer;
+    } else {
+      throw(err);
     }
   }
 }
