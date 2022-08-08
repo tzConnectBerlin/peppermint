@@ -13,17 +13,37 @@ const Handlers = {
 }
 
 const require = createRequire(import.meta.url);
+const promptly = require('promptly');
 require('console-stamp')(console);
 const config = require('./config.json');
 
-const main = async function() {
-	let batch_divider = 1;
+const get_signing_key = async function(config) {
+  try {
+    const signer = new InMemorySigner(config.privateKey);
+    return signer;
+  } catch (err) {
+    if (err.name == 'InvalidPassphraseError') {
+      const pass = await promptly.prompt('Passphrase: ', { silent: true });
+      const signer = InMemorySigner.fromSecretKey(config.privateKey, pass);
+      return signer;
+    } else {
+      throw(err);
+    }
+  }
+}
 
-	const queue = Queue(config.dbConnection);
-	const tezos = new TezosToolkit(config.rpcUrl);
-	const signer = new InMemorySigner(config.privateKey);
-	const address = await signer.publicKeyHash();
-	console.log("Signer initialized for originating address ", address);
+
+const main = async function() {
+
+  let batch_divider = 1;
+
+  const queue = Queue(config.dbConnection);
+  const tezos = new TezosToolkit(config.rpcUrl);
+
+  const signer = await get_signing_key(config)
+  console.log("signer: " + signer);
+  const address = await signer.publicKeyHash();
+  console.log("Signer initialized for originating address ", address);
 	tezos.setSignerProvider(signer);
 
 	let handlers = {};
@@ -83,7 +103,7 @@ const main = async function() {
 			let sent_operation = await batch.send();
 			let op_hash = sent_operation.opHash;
 			console.log("Sent operation group with hash", op_hash, "containing operations with ids:", JSON.stringify(batched_ids));
-			
+
 			// Save operation group hash - async because it's okay if it happens later
 			queue.save_sent(batched_ids, sent_operation.opHash).catch( (err) => { console.error("Database error when writing hash", sent_operation.opHash, "to sent operations with ids:", JSON.stringify(batched_ids)); } );
 
@@ -129,7 +149,7 @@ const main = async function() {
 						save_state_async(batched_ids, queue.state.REJECTED);
 				}
 				return true;
-			} 
+			}
 			console.error("An unhandled error has occurred when processing operations with ids:", JSON.stringify(batched_ids), "\n", err, "\nOperation group state unknown.");
 			save_state_async(batched_ids, queue.state.UNKNOWN);
 			return true;
