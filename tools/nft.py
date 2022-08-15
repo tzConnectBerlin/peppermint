@@ -40,6 +40,7 @@ class IpfsException(Exception):
 
 def connect_db():
     return psycopg2.connect(
+        port=config['DB_PORT'],
         host=config['DB_HOST'],
         database=config['DB_NAME'],
         user=config['DB_USER'],

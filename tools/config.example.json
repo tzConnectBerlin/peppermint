@@ -1,5 +1,6 @@
 {
 	"DB_HOST": "localhost",
+	"DB_PORT": 5432,
 	"DB_NAME": "peppermint",
 	"DB_USER": "peppermint",
 	"DB_PASSWORD": "peppermint",
