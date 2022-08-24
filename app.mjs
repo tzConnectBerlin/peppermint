@@ -4,9 +4,10 @@ import { InMemorySigner } from '@taquito/signer'
 
 import Queue from './queue.mjs'
 import { parse_rpc_error, postprocess_error_object } from './errorhandler/tezos_error.mjs'
-
 import MultiassetHandler from './operations/nft-multiasset.mjs'
 import TezHandler from './operations/tez.mjs'
+import ConfLoader from './confloader.mjs'
+
 const Handlers = {
 	MultiassetHandler,
 	TezHandler
@@ -15,7 +16,7 @@ const Handlers = {
 const require = createRequire(import.meta.url);
 const promptly = require('promptly');
 require('console-stamp')(console);
-const config = require('./config.json');
+const config = ConfLoader();
 
 const get_signing_key = async function(config) {
   try {
@@ -138,6 +139,8 @@ const main = async function() {
 					case "contract.balance_too_low":
 					case "contract.cannot_pay_storage_fee":
 						// Account has no tez in it
+					case "storage_exhausted.operation":
+						// There seems to be a bug in the node that may give this error when the account is low on tez
 						console.warn("Retriable Tezos error encountered:\n", tezos_error, "\nRetrying operations with ids:", JSON.stringify(batched_ids));
 						await queue.save_state(batched_ids, queue.state.PENDING);
 						break;
