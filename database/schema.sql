@@ -2,7 +2,7 @@ CREATE SCHEMA IF NOT EXISTS peppermint;
 
 DO $$ BEGIN
    CREATE TYPE peppermint.operation_state AS ENUM
-     ('pending', 'processing', 'rejected', 'waiting', 'confirmed', 'unknown', 'failed', 'lost');
+     ('pending', 'processing', 'rejected', 'waiting', 'confirmed', 'unknown', 'failed', 'lost', 'canary');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
