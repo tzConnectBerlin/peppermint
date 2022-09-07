@@ -21,7 +21,7 @@ create your database schema:
 
 ## Configuration
 
-`config.json` has all user-configurable parts *(selecting config file via command line argument pending implementation)*
+When loading the configuration, the process looks at the environment variable `PEPPERMINT_PROFILE`. If this variable is not set, the file `config.json` is loaded. If profile is set, the process looks for the file `config_{profile}.json`.
 
 This version of Peppermint allows multiple instances of handlers to be configured via `config.json`. In the `handlers` section, one can add multiple instances of the same handler module with different arguments, under different names. The names specified here will be used as the handler names in the SQL commands.
 
