@@ -38,7 +38,7 @@ const main = async function() {
 
   let batch_divider = 1;
 
-  const queue = Queue(config.dbConnection);
+  const queue = await Queue(config.dbConnection);
   const tezos = new TezosToolkit(config.rpcUrl);
 
   const signer = await get_signing_key(config)

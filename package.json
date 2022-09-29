@@ -4,17 +4,19 @@
 	"description": "",
 	"main": "app.ts",
 	"scripts": {
+		"start:dev": "PEPPERMINT_PROFILE=develop node app.mjs",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "MIT",
 	"dependencies": {
-		"@taquito/signer": "^13.0.1",
-		"@taquito/taquito": "^13.0.1",
+		"@taquito/signer": "^14.0.0",
+		"@taquito/taquito": "^14.0.0",
 		"console-stamp": "^3.0.3",
+		"mongodb": "^4.10.0",
 		"pg": "^8.7.1",
-	  "string-hex": "^1.0.0",
-	  "promptly": "^3.2.0"
+		"promptly": "^3.2.0",
+		"string-hex": "^1.0.0"
 	}
 }

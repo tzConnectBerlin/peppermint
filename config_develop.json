@@ -1,0 +1,28 @@
+{
+	"batchSize": 110,
+	"confirmations": 1,
+	"XprivateKey": "edesk1P5sdYMCSjMQiWcP6xGrt8RFqA6UKGvnbwSKcW6mY7JkUYwwnGf2zi3UwYk96bTQz3Msp7g8PvbGZDPAaLa",
+  "privateKey": "edesk1UjBUdmgCVxKGeuDWpjwSU1ocni3rX6DYH1qvpaADSRB2tGJcGTjuBMR7gWyFt3c2j2WbVEdk9gpGZYjk7C",
+	"rpcUrl": "https://ghostnet-archive.tzconnect.berlin/",
+	"pollingDelay": 10000,
+	"timeout": 300,
+	"dbConnection": {
+    "databaseType": "mongodb",
+    "mongodb": {
+      "url": "mongodb://localhost:3001",
+      "database": "meteor"
+    }
+	},
+	"handlers": {
+		"nft": {
+			"handler": "MultiassetHandler",
+			"args": {
+				"contract_address": "KT19ALA2kvWQeBRMc4B84zt3qUZfzYUymGoT"
+			}
+		},
+		"tez": {
+			"handler": "TezHandler",
+			"args": {}
+		}
+	}
+}
