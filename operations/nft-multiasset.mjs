@@ -48,15 +48,49 @@ export default async function(tezos, { contract_address }, pool) {
 		return burn_op;
 	};
 
-	let do_thing = async function(token_id, to_address) {
-		if (typeof contract_ops.do_thing != 'function') {
-			throw new Error("No do_thing entrypoint on contract");
-		}
+	const transfer = function({ token_id, from_address, to_address, amount }, batch) {
+			if (typeof contract_ops.transfer_tokens != 'function') {
+				throw new Error("No transfer_tokens entrypoint on contract");
+			}
+			if (!amount) {
+				amount = 1;
+			}
+			let transfer_arg = [
+				{
+					from_: from_address,
+					txs: [
+						{
+							to_: to_address,
+							token_id,
+							amount
+						}
+					]
+				}
+			];
+			batch.withContractCall(contract_ops.transfer_tokens(transfer_arg));
+			return true;
+	}
+
+	let do_thing = async function(from_address, to_address, batch) {
 		const client = await pool.connect();
 
-		const UPDATE_RECIPIENT_SQL = "UPDATE nfts SET recipient = $1 where id = $2 and recipient IS NULL";
-		const values = [to_address, token_id];
+		const FIND_UNALLOCATED_ROW = "SELECT * FROM nfts where recipient IS NULL ORDER BY id limit 1;"
+		const UPDATE_RECIPIENT_SQL = "UPDATE nfts SET recipient = $1 where token_id = $2 and recipient IS NULL";
+
 		try {
+			const unallocatedRowResult =  await client.query(FIND_UNALLOCATED_ROW);
+			const unallocatedRows = unallocatedRowResult.rows;
+
+			if (unallocatedRows.length !== 1) {
+				throw new Error('Could not get an unallocated row')
+			}
+
+			const { token_id: unallocatedTokenId } = unallocatedRows[0];
+
+			// I am not 100% sure what the batch argument is therefore I passed it from do_thing params to transfer args for now
+			transfer({ token_id: unallocatedTokenId, from_address, to_address }, batch)
+
+			const values = [to_address, unallocatedTokenId];
 			await client.query('BEGIN');
 			const result = await client.query(UPDATE_RECIPIENT_SQL, values);
 
@@ -101,28 +135,7 @@ export default async function(tezos, { contract_address }, pool) {
 			batch.withContractCall(mint_op);
 			return true;
 		},
-		transfer: function({ token_id, from_address, to_address, amount }, batch) {
-			if (typeof contract_ops.transfer_tokens != 'function') {
-				throw new Error("No transfer_tokens entrypoint on contract");
-			}
-			if (!amount) {
-				amount = 1;
-			}
-			let transfer_arg = [
-                {
-                    from_: from_address,
-                    txs: [
-                        {
-                            to_: to_address,
-                            token_id,
-                            amount
-                        }
-                    ]
-                }
-            ];
-			batch.withContractCall(contract_ops.transfer_tokens(transfer_arg));
-			return true;
-		},
+		transfer,
 		burn: function({ token_id, from_address, amount }, batch) {
 			let burn_op = burn_token(token_id, from_address, amount);
 			batch.withContractCall(burn_op);
