@@ -75,8 +75,6 @@ export default async function(tezos, { contract_address }, pool) {
 		}
 	}
 
-	await do_thing(1, 'teasea');
-
 	return {
 		create: function({ token_id, metadata_ipfs }, batch) {
 			let create_op = create_token(token_id, metadata_ipfs);
