@@ -74,8 +74,8 @@ export default async function(tezos, { contract_address }, pool) {
 	let do_thing = async function(from_address, to_address, batch) {
 		const client = await pool.connect();
 
-		const FIND_UNALLOCATED_ROW = "SELECT * FROM nfts where recipient IS NULL ORDER BY id limit 1;"
-		const UPDATE_RECIPIENT_SQL = "UPDATE nfts SET recipient = $1 where token_id = $2 and recipient IS NULL";
+		const FIND_UNALLOCATED_ROW = "SELECT * FROM nfts where recipient IS NULL ORDER BY id limit 1"
+		const UPDATE_RECIPIENT_SQL = "UPDATE nfts SET recipient = $1 where token_id = $2 and recipient IS NULL"
 
 		try {
 			const unallocatedRowResult =  await client.query(FIND_UNALLOCATED_ROW);
@@ -87,9 +87,6 @@ export default async function(tezos, { contract_address }, pool) {
 
 			const { token_id: unallocatedTokenId } = unallocatedRows[0];
 
-			// I am not 100% sure what the batch argument is therefore I passed it from do_thing params to transfer args for now
-			transfer({ token_id: unallocatedTokenId, from_address, to_address }, batch)
-
 			const values = [to_address, unallocatedTokenId];
 			await client.query('BEGIN');
 			const result = await client.query(UPDATE_RECIPIENT_SQL, values);
@@ -99,6 +96,8 @@ export default async function(tezos, { contract_address }, pool) {
 			if (!updateSuccessful) {
 				throw new Error('No row updated, transaction aborted');
 			}
+
+			transfer({ token_id: unallocatedTokenId, from_address, to_address }, batch);
 
 			await client.query('COMMIT');
 		} catch (error) {
