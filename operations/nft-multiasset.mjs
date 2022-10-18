@@ -74,8 +74,8 @@ export default async function(tezos, { contract_address }, pool) {
 	let do_thing = async function(from_address, to_address, batch) {
 		const client = await pool.connect();
 
-		const FIND_UNALLOCATED_ROW = "SELECT * FROM nfts where recipient IS NULL ORDER BY id limit 1"
-		const UPDATE_RECIPIENT_SQL = "UPDATE nfts SET recipient = $1 where token_id = $2 and recipient IS NULL"
+		const FIND_UNALLOCATED_ROW = "SELECT * FROM nfts WHERE recipient IS NULL ORDER BY id LIMIT 1"
+		const UPDATE_RECIPIENT_SQL = "UPDATE nfts SET recipient = $1 WHERE token_id = $2 AND recipient IS NULL"
 
 		try {
 			const unallocatedRowResult =  await client.query(FIND_UNALLOCATED_ROW);
