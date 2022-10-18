@@ -7,7 +7,7 @@ import { char2Bytes } from '@taquito/utils'
 // const hex = require('string-hex');
 // const utf8 = require('utf8')
 
-export default async function(tezos, { contract_address }) {
+export default async function(tezos, { contract_address }, pool) {
 	let nft_contract = await tezos.contract.at(contract_address);
 	console.log("token contract loaded", nft_contract.parameterSchema.ExtractSignatures());
 
@@ -47,6 +47,35 @@ export default async function(tezos, { contract_address }) {
 		let burn_op = contract_ops.burn_tokens([{ owner: from_address, token_id, amount }]);
 		return burn_op;
 	};
+
+	let do_thing = async function(token_id, to_address) {
+		if (typeof contract_ops.do_thing != 'function') {
+			throw new Error("No do_thing entrypoint on contract");
+		}
+		const client = await pool.connect();
+
+		const UPDATE_RECIPIENT_SQL = "UPDATE nfts SET recipient = $1 where id = $2 and recipient IS NULL";
+		const values = [to_address, token_id];
+		try {
+			await client.query('BEGIN');
+			const result = await client.query(UPDATE_RECIPIENT_SQL, values);
+
+			const updateSuccessful = result.rowCount === 1;
+
+			if (!updateSuccessful) {
+				throw new Error('No row updated, transaction aborted');
+			}
+
+			await client.query('COMMIT');
+		} catch (error) {
+			await client.query('ROLLBACK');
+			throw error;
+		} finally {
+			client.release()
+		}
+	}
+
+	await do_thing(1, 'teasea');
 
 	return {
 		create: function({ token_id, metadata_ipfs }, batch) {

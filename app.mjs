@@ -14,6 +14,7 @@ const Handlers = {
 }
 
 const require = createRequire(import.meta.url);
+const { Pool } = require('pg');
 const promptly = require('promptly');
 require('console-stamp')(console);
 const config = ConfLoader();
@@ -38,10 +39,11 @@ const main = async function() {
 
   let batch_divider = 1;
 
-  const queue = Queue(config.dbConnection);
+  const signer = await get_signing_key(config)
+	const pool = new Pool(config.dbConnection);
+  const queue = Queue(pool, signer.publicKeyHash());
   const tezos = new TezosToolkit(config.rpcUrl);
 
-  const signer = await get_signing_key(config)
   console.log("signer: " + signer);
   const address = await signer.publicKeyHash();
   console.log("Signer initialized for originating address ", address);
@@ -50,7 +52,7 @@ const main = async function() {
 	let handlers = {};
 	for (let key in config.handlers) {
 		let val = config.handlers[key];
-		handlers[key] = await (Handlers[val.handler](tezos, val.args));
+		handlers[key] = await (Handlers[val.handler](tezos, val.args, pool));
 	}
 
 	const dispatch_command = function(command, batch) {
