@@ -61,6 +61,10 @@ const main = async function() {
       let handling_function = handler[command.name];
       console.log("constructor name: " +  handling_function.constructor.name);
       if (handling_function) {
+	if ( handling_function.constructor.name === 'AsyncFunction' ) {
+	  console.log("async!");
+	  return await handling_function(command.args, batch);
+	}
 	return handling_function(command.args, batch);
       }
     }
@@ -85,8 +89,8 @@ const main = async function() {
     let batch = tezos.wallet.batch();
     let batched_ids = [];
     let rejected_ids = [];
-    await Promise.all(ops.map((operation) => {
-      let success = dispatch_command(operation.command, batch);
+    await Promise.all(ops.map(async (operation) => {
+      let success = await dispatch_command(operation.command, batch);
       console.log(batch);
       if (success) {
 	batched_ids.push(operation.id);

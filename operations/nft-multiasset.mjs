@@ -63,7 +63,6 @@ export default async function(tezos, { contract_address }, pool) {
 
   const get_next_from_table = async function({from_address, to_address}, batch) {
     const client = await pool.connect();
-
     const FIND_UNALLOCATED_ROW = "SELECT * FROM nfts WHERE recipient IS NULL ORDER BY id LIMIT 1"
     const UPDATE_RECIPIENT_SQL = "UPDATE nfts SET recipient = $1 WHERE id = $2 AND recipient IS NULL"
     let success = true;
@@ -85,7 +84,7 @@ export default async function(tezos, { contract_address }, pool) {
 	throw new Error('No row updated, transaction aborted');
       }
 
-      success = transfer({ token_id, from_address, to_address, amount:1 }, batch);
+      success = await transfer({ token_id, from_address, to_address, amount:1 }, batch);
 
       await client.query('COMMIT');
     } catch (error) {
