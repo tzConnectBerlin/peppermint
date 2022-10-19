@@ -55,10 +55,11 @@ const main = async function() {
     handlers[key] = await (Handlers[val.handler](tezos, val.args, pool));
   }
 
-  const dispatch_command = function(command, batch) {
+  const dispatch_command = async function(command, batch) {
     let handler = handlers[command.handler];
     if (handler) {
       let handling_function = handler[command.name];
+      console.log("constructor name: " +  handling_function.constructor.name);
       if (handling_function) {
 	return handling_function(command.args, batch);
       }
@@ -85,10 +86,8 @@ const main = async function() {
     let batched_ids = [];
     let rejected_ids = [];
     await Promise.all(ops.map((operation) => {
-
       let success = dispatch_command(operation.command, batch);
-
-
+      console.log(batch);
       if (success) {
 	batched_ids.push(operation.id);
       } else {
@@ -108,9 +107,9 @@ const main = async function() {
 
     console.log("Attempting to send operation group containing operations with ids:", JSON.stringify(batched_ids));
     try {
-            console.log("foo");
+      console.log("foo");
       let sent_operation = await batch.send();
-            console.log("bar");
+      console.log("bar");
       let op_hash = sent_operation.opHash;
       console.log("Sent operation group with hash", op_hash, "containing operations with ids:", JSON.stringify(batched_ids));
 

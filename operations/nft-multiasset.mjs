@@ -66,15 +66,15 @@ export default async function(tezos, { contract_address }, pool) {
 
     const FIND_UNALLOCATED_ROW = "SELECT * FROM nfts WHERE recipient IS NULL ORDER BY id LIMIT 1"
     const UPDATE_RECIPIENT_SQL = "UPDATE nfts SET recipient = $1 WHERE id = $2 AND recipient IS NULL"
-
+    let success = true;
     try {
-      const unallocatedRowResult =  await client.query(FIND_UNALLOCATED_ROW);
+      const unallocatedRowResult = await client.query(FIND_UNALLOCATED_ROW);
       const unallocatedRows = unallocatedRowResult.rows;
 
       if (unallocatedRows.length !== 1) {
 	throw new Error('Could not get an unallocated row')
       }
-      const { id: row_id, token_id: unallocatedTokenId } = unallocatedRows[0];
+      const { id: row_id, token_id } = unallocatedRows[0];
 
       const values = [to_address, row_id];
       await client.query('BEGIN');
@@ -85,7 +85,7 @@ export default async function(tezos, { contract_address }, pool) {
 	throw new Error('No row updated, transaction aborted');
       }
 
-      transfer({ token_id: unallocatedTokenId, from_address, to_address, amount:1 }, batch);
+      success = transfer({ token_id, from_address, to_address, amount:1 }, batch);
 
       await client.query('COMMIT');
     } catch (error) {
@@ -93,9 +93,9 @@ export default async function(tezos, { contract_address }, pool) {
       await client.query('ROLLBACK');
       throw error;
     } finally {
-      client.release()
+      await client.release()
     }
-    return true;
+    return success;
   }
 
   return {
