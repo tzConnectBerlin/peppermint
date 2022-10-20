@@ -3,6 +3,7 @@ insert into peppermint.operations (originator , command) values ('tz1Pw1WizZhFx3
 
 -- {
 --   "originator": "tz1Pw1WizZhFx3dz6mLh28g7ZS4GrLEXLhoe",
+--   "state": "pending",
 --   "command": {
 --     "args": {
 --       "token_id": 2,
