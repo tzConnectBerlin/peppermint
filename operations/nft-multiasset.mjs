@@ -6,6 +6,21 @@ export default async function(tezos, { contract_address }, pool) {
   let nft_contract = await tezos.contract.at(contract_address);
   console.log("token contract loaded", nft_contract.parameterSchema.ExtractSignatures());
 
+  let known_contracts = new Map([ [ contract_address, nft_contract ] ]);
+
+  const add_contract = function(contract_id) {
+    contract = await tezos.contract.at(contract_id);
+    known_contracts[contract_id] = contract;
+    return contract;
+  }
+
+  const get_contract = function(contract_id) {
+    if (known_contracts[contract_id]) {
+      return known_contracts[contract_id];
+    }
+    return add_contract(contract_id);
+  }
+
   let contract_ops = {
     create_token: nft_contract.methods.create_token,
     mint_tokens: nft_contract.methods.mint_tokens,
