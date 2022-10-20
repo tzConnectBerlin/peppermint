@@ -4,6 +4,7 @@
 	"description": "",
 	"main": "app.ts",
 	"scripts": {
+		"start": "PEPPERMINT_PROFILE=production node app.mjs",
 		"start:dev": "PEPPERMINT_PROFILE=develop node app.mjs",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},

@@ -45,7 +45,7 @@ export default async function(db_connection) {
 
 	const checkout = async function(originator, limit) {
 		if (db_connection.databaseType=='mongodb') {
-			const query = {state:'prending', originator}
+			const query = {state:'pending', originator}
 			console.log('query',query)
 			const result = await operationsCollection.find(query).sort({createdAt:1}).limit(limit).toArray() //project(fields).
 			console.log('result',result)

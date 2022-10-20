@@ -2,7 +2,7 @@
 	"batchSize": 110,
 	"confirmations": 1,
   "privateKey": "edesk1UjBUdmgCVxKGeuDWpjwSU1ocni3rX6DYH1qvpaADSRB2tGJcGTjuBMR7gWyFt3c2j2WbVEdk9gpGZYjk7C",
-	"rpcUrl": "https://ghostnet-archive.tzconnect.berlin/",
+	"rpcUrl": "https://mainnet-archive.tzconnect.berlin/",
 	"pollingDelay": 10000,
 	"timeout": 300,
 	"dbConnection": {
@@ -16,7 +16,7 @@
 		"nft": {
 			"handler": "MultiassetHandler",
 			"args": {
-				"contract_address": "KT19ALA2kvWQeBRMc4B84zt3qUZfzYUymGoT"
+				"contract_address": "KT1SnRKkheSvY6jfvvuVufqWPiAhiyaPhn65"
 			}
 		},
 		"tez": {
