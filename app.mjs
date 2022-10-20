@@ -83,9 +83,9 @@ const main = async function() {
 		await Promise.all(ops.map((operation) => {
 			let success = dispatch_command(operation.command, batch);
 			if (success) {
-				batched_ids.push(operation.id);
+				batched_ids.push(operation._id ? operation._id : operation.id);
 			} else {
-				rejected_ids.push(operation.id);
+				rejected_ids.push(operation._id ? operation._id : operation.id);
 			}
 		}));
 
