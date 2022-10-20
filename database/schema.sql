@@ -48,3 +48,13 @@ CREATE TRIGGER update_operations_last_updated_at
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
+
+DROP TABLE IF EXISTS nft_queue CASCADE;
+CREATE TABLE nft_queue (
+     id SERIAL,
+     campaign TEXT NOT NULL,
+     token_id NUMERIC NOT NULL,
+     contract_id TEXT NOT NULL,
+     recipient TEXT NULL);
+
+CREATE INDEX ON nft_queue(recipient);

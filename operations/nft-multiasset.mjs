@@ -61,23 +61,23 @@ export default async function(tezos, { contract_address }, pool) {
     return true;
   }
 
-  const get_next_from_table = async function({from_address, to_address}, batch) {
+  const get_next_from_table = async function({from_address, to_address, campaign}, batch) {
     const client = await pool.connect();
-    const FIND_UNALLOCATED_ROW = "SELECT * FROM nfts WHERE recipient IS NULL ORDER BY id LIMIT 1"
-    const UPDATE_RECIPIENT_SQL = "UPDATE nfts SET recipient = $1 WHERE id = $2 AND recipient IS NULL"
+    const FIND_UNALLOCATED_ROW = "SELECT * FROM nft_queue WHERE recipient IS NULL AND campaign = $1 ORDER BY id LIMIT 1"
+    const UPDATE_RECIPIENT_SQL = "UPDATE nft_queue SET recipient = $1 WHERE id = $2 AND campaign = $3 AND recipient IS NULL"
     let success = true;
     try {
-      const unallocatedRowResult = await client.query(FIND_UNALLOCATED_ROW);
+      const unallocatedRowResult = await client.query(FIND_UNALLOCATED_ROW, [ campaign ]);
       const unallocatedRows = unallocatedRowResult.rows;
 
       if (unallocatedRows.length !== 1) {
-	throw new Error('Could not get an unallocated row')
+	console.log("No NFTS for campaign " + campaign);
+	return false;
       }
       const { id: row_id, token_id } = unallocatedRows[0];
 
-      const values = [to_address, row_id];
       await client.query('BEGIN');
-      const result = await client.query(UPDATE_RECIPIENT_SQL, values);
+      const result = await client.query(UPDATE_RECIPIENT_SQL, [ to_address, row_id, campaign ]);
 
       const updateSuccessful = result.rowCount === 1;
       if (!updateSuccessful) {

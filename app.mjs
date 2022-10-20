@@ -89,6 +89,7 @@ const main = async function() {
     let batch = tezos.wallet.batch();
     let batched_ids = [];
     let rejected_ids = [];
+
     await Promise.all(ops.map(async (operation) => {
       let success = await dispatch_command(operation.command, batch);
       console.log(batch);
