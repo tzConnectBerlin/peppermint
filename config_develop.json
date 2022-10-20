@@ -16,12 +16,13 @@
 		"nft": {
 			"handler": "MultiassetHandler",
 			"args": {
-				"contract_address": "KT19ALA2kvWQeBRMc4B84zt3qUZfzYUymGoT"
+				"contract_address": "KT1TZHcWvioTaxHHKdqeH1WxJKwL8XWaE9jr"
 			}
 		},
 		"tez": {
 			"handler": "TezHandler",
 			"args": {}
 		}
-	}
+	},
+	"test": "https://better-call.dev/ghostnet/KT1TZHcWvioTaxHHKdqeH1WxJKwL8XWaE9jr/operations"
 }

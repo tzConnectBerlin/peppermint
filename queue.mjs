@@ -31,6 +31,11 @@ export default async function(db_connection) {
 
 
 	const save_state = async function(ids, state) {
+		console.log('save_state',ids,state)
+		console.log('JJR ',{ _id: {$in: ids} },
+		{
+			$set: { state, updatedAt:new Date() },
+		})
 		if (db_connection.databaseType=='mongodb') {
 			return operationsCollection.updateMany(
 				{ _id: {$in: ids} },
