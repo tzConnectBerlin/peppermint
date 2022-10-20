@@ -54,7 +54,6 @@ CREATE TABLE nft_queue (
      id SERIAL,
      campaign TEXT NOT NULL,
      token_id NUMERIC NOT NULL,
-     contract_id TEXT NOT NULL,
      recipient TEXT NULL);
 
 CREATE INDEX ON nft_queue(recipient);
