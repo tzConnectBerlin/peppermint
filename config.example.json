@@ -5,12 +5,13 @@
 	"rpcUrl": "http://immensely.newby.org:8734/",
 	"pollingDelay": 10000,
 	"timeout": 300,
+	"warnBelowTez": 10.0,
 	"dbConnection": {
 		"user": "tezos",
-        "password": "tezos",
-        "host": "localhost",
-        "port": 5432,
-        "database": "tezos"
+		"password": "tezos",
+ 		"host": "localhost",
+ 		"port": 5432,
+ 		"database": "tezos"
 	},
 	"handlers": {
 		"nft": {

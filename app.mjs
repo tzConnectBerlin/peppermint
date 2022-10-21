@@ -69,8 +69,18 @@ const main = async function() {
 		queue.save_state(ids, state).catch((err) => { console.error("Database error when setting", state, "on operation with ids:", JSON.stringify(ids)); });;
 	}
 
+	const health_check = async function() {
+		let tez_supply = await tezos.tz.getBalance(address);
+		tez_supply = tez_supply.shiftedBy(-6).toNumber();
+		if (tez_supply > config.warnBelowTez) {
+			await queue.kill_canaries(address);
+		} else {
+			console.warn(`Tez balance on account ${address} below warning threshold`);
+		}
+	};
+
 	const heartbeat = async function() {
-		await queue.kill_canaries(address);
+		await health_check();
 
 		let ops = await queue.checkout(address, ~~(config.batchSize/batch_divider) + 1);
 		if (ops.length == 0) {
