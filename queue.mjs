@@ -26,7 +26,7 @@ export default function(db_connection) {
 		return pool.query(SENT_SQL, [op_hash, ids]);
 	};
 
-	const kill_canaries = function() {
+	const kill_canaries = function(originator) {
 		return pool.query(KILL_CANARIES_SQL, [ originator ]);
 	}
 

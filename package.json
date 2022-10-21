@@ -10,8 +10,8 @@
 	"author": "",
 	"license": "MIT",
 	"dependencies": {
-		"@taquito/signer": "^13.0.1",
-		"@taquito/taquito": "^13.0.1",
+		"@taquito/signer": "^14.0.0",
+		"@taquito/taquito": "^14.0.0",
 		"console-stamp": "^3.0.3",
 		"pg": "^8.7.1",
 	  "string-hex": "^1.0.0",

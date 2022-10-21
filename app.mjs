@@ -70,7 +70,7 @@ const main = async function() {
 	}
 
 	const heartbeat = async function() {
-		await queue.kill_canaries();
+		await queue.kill_canaries(address);
 
 		let ops = await queue.checkout(address, ~~(config.batchSize/batch_divider) + 1);
 		if (ops.length == 0) {
