@@ -70,17 +70,29 @@ const main = async function() {
 	}
 
 	const health_check = async function() {
-		let tez_supply = await tezos.tz.getBalance(address);
-		tez_supply = tez_supply.shiftedBy(-6).toNumber();
+		let tez_supply = 0;
+		try {
+			let mutez_supply = await tezos.tz.getBalance(address);
+			tez_supply = mutez_supply.shiftedBy(-6).toNumber();
+		} catch (err) {
+			console.log("An error has occurred while attempting to get tez balance; the node may be down or inaccessible.\n", err);
+			return false;
+		}
+
 		if (tez_supply > config.warnBelowTez) {
+			// all okay <3
 			await queue.kill_canaries(address);
 		} else {
 			console.warn(`Tez balance on account ${address} below warning threshold`);
 		}
+
+		return true;
 	};
 
 	const heartbeat = async function() {
-		await health_check();
+		if (!await health_check()) {
+			return true;
+		}
 
 		let ops = await queue.checkout(address, ~~(config.batchSize/batch_divider) + 1);
 		if (ops.length == 0) {
