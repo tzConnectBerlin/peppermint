@@ -1,6 +1,9 @@
 //import { TezosToolkit } from "@taquito/taquito";
 import { MichelsonMap, TezosPreapplyFailureError } from '@taquito/taquito'
 import { char2Bytes } from '@taquito/utils'
+
+import util from 'util'
+
 // import { createRequire } from 'module'
 // const require = createRequire(import.meta.url);
 
@@ -9,7 +12,7 @@ import { char2Bytes } from '@taquito/utils'
 
 export default async function(tezos, { contract_address }) {
 	let nft_contract = await tezos.contract.at(contract_address);
-	console.log("token contract loaded", nft_contract.parameterSchema.ExtractSignatures());
+	console.log("token contract loaded", util.inspect(nft_contract.parameterSchema.ExtractSignatures(), {showHidden: false, depth: null, colors: true}));
 
 	let contract_ops = {
 		create_token: nft_contract.methods.create_token,
