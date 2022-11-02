@@ -82,10 +82,11 @@ const main = async function() {
 		let rejected_ids = [];
 		await Promise.all(ops.map((operation) => {
 			let success = dispatch_command(operation.command, batch);
+			const id = config.dbConnection.databaseType == 'mongodb' && operation._id ? operation._id : operation.id
 			if (success) {
-				batched_ids.push(operation._id ? operation._id : operation.id);
+				batched_ids.push(id);
 			} else {
-				rejected_ids.push(operation._id ? operation._id : operation.id);
+				rejected_ids.push(id);
 			}
 		}));
 
