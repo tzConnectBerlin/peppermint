@@ -4,6 +4,8 @@ const require = createRequire(import.meta.url);
 const { Pool } = require('pg');
 const { MongoClient, ObjectID } = require('mongodb')
 
+import util from 'util'
+
 //const GET_PENDING_SQL = "SELECT * FROM operations WHERE state = 'pending' AND originator = $1 ORDER BY submitted_at ASC LIMIT $2"
 const CHECKOUT_SQL = "WITH cte AS (SELECT id FROM peppermint.operations WHERE state='pending' AND originator=$1 ORDER BY id ASC LIMIT $2) UPDATE peppermint.operations AS op SET state = 'processing' FROM cte WHERE cte.id = op.id RETURNING *";
 const SENT_SQL = "UPDATE peppermint.operations SET included_in = $1 WHERE id = ANY($2)"
@@ -24,7 +26,6 @@ export default async function(db_connection) {
 			await client.connect()
 			const db = client.db(db_connection.mongodb.database)
 			operationsCollection = db.collection('operations')
-			console.log('hi')
 		}
 		await mdb()
 	} else {
@@ -51,7 +52,7 @@ export default async function(db_connection) {
 			const query = {state:'pending', originator}
 			console.log('query',query)
 			const result = await operationsCollection.find(query).sort({createdAt:1}).limit(limit).toArray() //project(fields).
-			console.log('result',result)
+			console.log('result',util.inspect(result, {showHidden: false, depth: null, colors: true}))
 			if (Array.isArray(result)) {
 				await operationsCollection.updateMany(
 					{ _id: {$in:result.map( row => row._id) } },
