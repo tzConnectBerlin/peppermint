@@ -10,6 +10,9 @@ const SET_STATE_SQL = "UPDATE peppermint.operations SET state = $1 WHERE id = AN
 
 const KILL_CANARIES_SQL = "DELETE FROM peppermint.operations WHERE state='canary' AND originator = $1";
 
+const REGISTER_PROCESS_SQL = "INSERT INTO peppermint.processes (originator, process_uuid) VALUES ($1, $2) ON CONFLICT DO NOTHING";
+const UNREGISTER_PROCESS_SQL = "DELETE FROM peppermint.processes WHERE originator=$1 AND process_uuid=$2";
+
 export default function(db_connection) {
 	let pool = new Pool(db_connection);
 
@@ -28,7 +31,16 @@ export default function(db_connection) {
 
 	const kill_canaries = function(originator) {
 		return pool.query(KILL_CANARIES_SQL, [ originator ]);
-	}
+	};
+
+	const register_process = async function({ originator, process_uuid }) {
+		let result = await pool.query(REGISTER_PROCESS_SQL, [ originator, process_uuid ]);
+		return result.rowCount;
+	};
+
+	const unregister_process = function({ originator, process_uuid }) {
+		return pool.query(UNREGISTER_PROCESS_SQL, [ originator, process_uuid ]);
+	};
 
 	const state = {
 		PENDING: 'pending',
@@ -43,6 +55,8 @@ export default function(db_connection) {
 			save_sent,
 			save_state,
 			kill_canaries,
+			register_process,
+			unregister_process,
 			state
 	};
 }

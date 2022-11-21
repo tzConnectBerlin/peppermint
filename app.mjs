@@ -1,12 +1,14 @@
 import { createRequire } from 'module'
 import { TezosToolkit, TezosOperationError } from '@taquito/taquito'
 import { InMemorySigner } from '@taquito/signer'
+import { asyncExitHook } from 'exit-hook'
 
 import Queue from './queue.mjs'
 import { parse_rpc_error, postprocess_error_object } from './errorhandler/tezos_error.mjs'
 import MultiassetHandler from './operations/nft-multiasset.mjs'
 import TezHandler from './operations/tez.mjs'
 import ConfLoader from './confloader.mjs'
+import ProcMgr from './procmgr.mjs'
 
 const Handlers = {
 	MultiassetHandler,
@@ -46,6 +48,8 @@ const main = async function() {
   const address = await signer.publicKeyHash();
   console.log("Signer initialized for originating address ", address);
 	tezos.setSignerProvider(signer);
+
+	const procmgr = ProcMgr({ db: queue, originator: address, config });
 
 	let handlers = {};
 	for (let key in config.handlers) {
@@ -183,18 +187,21 @@ const main = async function() {
 		}
 	};
 
+	asyncExitHook(() => {
+		console.log("Attempting clean exit...");
+		return procmgr.unregister();
+	}, { minimumWait: 1000 });
+
+	await procmgr.register();
 	let signal = true;
-	while (signal) {
-		try {
-			let [ result, _ ] = await Promise.all([
-				heartbeat(),
-				new Promise(_ => setTimeout(_, config.pollingDelay))
-			]);
-			signal = result;
-		} catch (err) {
-			console.error("An error has occurred in the main event loop.\n", err);
+		process.on('SIGINT', function() {
 			signal = false;
-		}
+		});
+	while (true) {
+		await Promise.all([
+			heartbeat(),
+			new Promise(_ => setTimeout(_, config.pollingDelay))
+		]);
 	}
 
 };
