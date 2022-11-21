@@ -193,10 +193,6 @@ const main = async function() {
 	}, { minimumWait: 1000 });
 
 	await procmgr.register();
-	let signal = true;
-		process.on('SIGINT', function() {
-			signal = false;
-		});
 	while (true) {
 		await Promise.all([
 			heartbeat(),
