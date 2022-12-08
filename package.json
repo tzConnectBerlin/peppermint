@@ -10,13 +10,14 @@
 	"author": "",
 	"license": "MIT",
 	"dependencies": {
+		"@taquito/remote-signer": "^15.0.0",
 		"@taquito/signer": "^14.1.0",
 		"@taquito/taquito": "^14.1.0",
 		"console-stamp": "^3.0.3",
 		"exit-hook": "^3.1.2",
 		"pg": "^8.7.1",
 		"promptly": "^3.2.0",
-	  "string-hex": "^1.0.0",
+		"string-hex": "^1.0.0",
 		"uuid": "^9.0.0"
 	}
 }

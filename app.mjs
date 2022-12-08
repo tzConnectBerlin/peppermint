@@ -1,6 +1,7 @@
 import { createRequire } from 'module'
 import { TezosToolkit, TezosOperationError } from '@taquito/taquito'
 import { InMemorySigner } from '@taquito/signer'
+import { RemoteSigner } from '@taquito/remote-signer';
 import { asyncExitHook } from 'exit-hook'
 
 import Queue from './queue.mjs'
@@ -21,17 +22,26 @@ require('console-stamp')(console);
 const config = ConfLoader();
 
 const get_signing_key = async function(config) {
-  try {
-    const signer = new InMemorySigner(config.privateKey);
-    return signer;
-  } catch (err) {
-    if (err.name == 'InvalidPassphraseError') {
-      const pass = await promptly.prompt('Passphrase: ', { silent: true });
-      const signer = InMemorySigner.fromSecretKey(config.privateKey, pass);
-      return signer;
-    } else {
-      throw(err);
-    }
+  if (config.privateKey) {
+	  try {
+		  const signer = new InMemorySigner(config.privateKey);
+		  return signer;
+	  } catch (err) {
+		  if (err.name == 'InvalidPassphraseError') {
+			  const pass = await promptly.prompt('Passphrase: ', { silent: true });
+			  const signer = InMemorySigner.fromSecretKey(config.privateKey, pass);
+			  return signer;
+		  } else {
+			  throw (err);
+		  }
+	  }
+  } else {
+	const signer = new RemoteSigner(
+		config.remoteSigner.pkh,
+		config.remoteSigner.rootUrl,
+		{ headers: config.remoteSigner.headers }
+	);
+	return signer;
   }
 }
 
