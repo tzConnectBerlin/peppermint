@@ -1,6 +1,13 @@
 {
 	"batchSize": 110,
 	"confirmations": 1,
+	"remoteSigner": {
+		"pkh": "tz1somethingsomething",
+		"rootUrl": "http://127.0.0.1:8000",
+		"headers": {
+			"x-api-key": "supersecureapikey"
+		}
+	},
 	"privateKey": "edsksomethingsomething",
 	"rpcUrl": "https://ghostnet.ecadinfra.com/",
 	"pollingDelay": 10000,

@@ -23,6 +23,8 @@ create your database schema:
 
 When loading the configuration, the process looks at the environment variable `PEPPERMINT_PROFILE`. If this variable is not set, the file `config.json` is loaded. If profile is set, the process looks for the file `config_{profile}.json`.
 
+To enable remote signer support, remove `privateKey` from `config.json` and configure `remoteSigner` with relevant settings.
+
 This version of Peppermint allows multiple instances of handlers to be configured via `config.json`. In the `handlers` section, one can add multiple instances of the same handler module with different arguments, under different names. The names specified here will be used as the handler names in the SQL commands.
 
 At this moment, to reduce complexity, handler modules are *not* auto-populated from the `operations` folder, but imported manually in `app.mjs` - so when adding new, custom handler modules, these need to be specifically imported and added to the `Handlers` object in that file.
