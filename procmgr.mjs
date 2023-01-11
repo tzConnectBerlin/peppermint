@@ -24,8 +24,13 @@ export default function({ db, originator, config }) {
     return db.unregister_process({ originator, process_uuid });
   };
 
+  const get_process_uuid = function() {
+    return process_uuid;
+  }
+
   return {
     register,
-    unregister
+    unregister,
+    get_process_uuid
   };
 }

@@ -79,6 +79,10 @@ const main = async function() {
 		return false;
 	}
 
+	const update_last_pull = function() {
+		queue.update_last_pull({ originator: address, process_uuid: procmgr.get_process_uuid() }).catch(() => { console.error("Database error when updating last pull epoch"); });
+	}
+
 	const save_state_async = function(ids, state) {
 		queue.save_state(ids, state).catch((err) => { console.error("Database error when setting", state, "on operation with ids:", JSON.stringify(ids)); });;
 	}
@@ -205,6 +209,7 @@ const main = async function() {
 	await procmgr.register();
 	while (true) {
 		await Promise.all([
+			update_last_pull(),
 			heartbeat(),
 			new Promise(_ => setTimeout(_, config.pollingDelay))
 		]);
