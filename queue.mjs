@@ -13,7 +13,7 @@ const KILL_CANARIES_SQL = "DELETE FROM peppermint.operations WHERE state='canary
 const REGISTER_PROCESS_SQL = "INSERT INTO peppermint.processes (originator, process_uuid) VALUES ($1, $2) ON CONFLICT DO NOTHING";
 const UNREGISTER_PROCESS_SQL = "DELETE FROM peppermint.processes WHERE originator=$1 AND process_uuid=$2";
 
-const UPDATE_LAST_PULL = "UPDATE peppermint.processes SET messages = jsonb_set(messages, '{last_pull_at_epoch}', to_jsonb(extract(epoch from now()::timestamptz))) WHERE originator=$1 AND process_uuid=$2 RETURNING *";
+const UPDATE_LAST_PULL = "UPDATE peppermint.processes SET messages = jsonb_set(messages, '{last_pull_at_epoch}', to_jsonb(extract(epoch from now()::timestamptz) * 1000)) WHERE originator=$1 AND process_uuid=$2 RETURNING *";
 
 export default function(db_connection) {
 	let pool = new Pool(db_connection);
