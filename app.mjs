@@ -101,6 +101,7 @@ const main = async function() {
 			// all okay <3
 			await queue.kill_canaries(address);
 		} else {
+			await queue.update_balance_warning({ originator: address, process_uuid: procmgr.get_process_uuid(), tez_supply});
 			console.warn(`Tez balance on account ${address} below warning threshold`);
 		}
 

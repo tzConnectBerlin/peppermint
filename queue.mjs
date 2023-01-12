@@ -13,7 +13,8 @@ const KILL_CANARIES_SQL = "DELETE FROM peppermint.operations WHERE state='canary
 const REGISTER_PROCESS_SQL = "INSERT INTO peppermint.processes (originator, process_uuid) VALUES ($1, $2) ON CONFLICT DO NOTHING";
 const UNREGISTER_PROCESS_SQL = "DELETE FROM peppermint.processes WHERE originator=$1 AND process_uuid=$2";
 
-const UPDATE_LAST_PULL = "UPDATE peppermint.processes SET messages = jsonb_set(messages, '{last_pull_at_epoch}', to_jsonb(extract(epoch from now()::timestamptz) * 1000)) WHERE originator=$1 AND process_uuid=$2 RETURNING *";
+const UPDATE_LAST_PULL = "UPDATE peppermint.processes SET messages = jsonb_set(messages, '{last_pull_at_epoch}', to_jsonb(ROUND(extract(epoch from now()::timestamptz) * 1000))) WHERE originator=$1 AND process_uuid=$2 RETURNING *";
+const ADD_BALANCE_WARNING = "UPDATE peppermint.processes SET messages = jsonb_set(messages, '{balance_warning}', to_jsonb($3::TEXT)) WHERE originator=$1 AND process_uuid=$2";
 
 export default function(db_connection) {
 	let pool = new Pool(db_connection);
@@ -48,6 +49,11 @@ export default function(db_connection) {
 		return pool.query(UPDATE_LAST_PULL, [ originator, process_uuid ]);
 	}
 
+	const update_balance_warning = function({ originator, process_uuid, tez_supply }) {
+		const warning_message = `Tez balance of ${tez_supply} on account ${originator} is below warning threshold`;
+		return pool.query(ADD_BALANCE_WARNING, [ originator, process_uuid, warning_message ])
+	}
+
 	const state = {
 		PENDING: 'pending',
 		CONFIRMED: 'confirmed',
@@ -64,6 +70,7 @@ export default function(db_connection) {
 			register_process,
 			unregister_process,
 			update_last_pull,
+			update_balance_warning,
 			state
 	};
 }
