@@ -60,6 +60,7 @@ const main = async function() {
 	tezos.setSignerProvider(signer);
 
 	const procmgr = ProcMgr({ db: queue, originator: address, config });
+	const process_uuid = procmgr.get_process_uuid();
 
 	let handlers = {};
 	for (let key in config.handlers) {
@@ -80,7 +81,7 @@ const main = async function() {
 	}
 
 	const update_last_pull = function() {
-		queue.update_last_pull({ originator: address, process_uuid: procmgr.get_process_uuid() }).catch(() => { console.error("Database error when updating last pull epoch"); });
+		queue.update_last_pull({ originator: address, process_uuid }).catch(() => { console.error("Database error when updating last pull epoch"); });
 	}
 
 	const save_state_async = function(ids, state) {
@@ -99,9 +100,10 @@ const main = async function() {
 
 		if (tez_supply > config.warnBelowTez) {
 			// all okay <3
+			await queue.remove_balance_warning({ originator: address, process_uuid })
 			await queue.kill_canaries(address);
 		} else {
-			await queue.update_balance_warning({ originator: address, process_uuid: procmgr.get_process_uuid(), tez_supply});
+			await queue.add_balance_warning({ originator: address, process_uuid, tez_supply });
 			console.warn(`Tez balance on account ${address} below warning threshold`);
 		}
 
