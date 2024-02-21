@@ -10,9 +10,9 @@
 	"author": "",
 	"license": "MIT",
 	"dependencies": {
-		"@taquito/remote-signer": "^15.0.1",
-		"@taquito/signer": "^15.0.1",
-		"@taquito/taquito": "^15.0.1",
+		"@taquito/remote-signer": "^19.0.2",
+		"@taquito/signer": "^19.0.2",
+		"@taquito/taquito": "^19.0.2",
 		"console-stamp": "^3.0.3",
 		"exit-hook": "^3.1.2",
 		"pg": "^8.7.1",
